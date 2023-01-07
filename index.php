@@ -1,21 +1,40 @@
 <?php
 
-function debugToConsole($data) {
+function debugToConsole(mixed $data, ?array $spaces = null): void
+{
     $output = $data;
-    if (is_array($output))
+
+    if (!empty($spaces)) {
+        $words = [];
+
+        for ($i = 0; $i < sizeof($spaces); $i++) {
+            $word = array_shift($data);
+            if ($spaces[$i] > strlen($word)) {
+                $word .= str_repeat(" ",$spaces[$i] - strlen($word));
+            }
+            $words[] = $word;
+        }
+        $output = $words;
+    }
+
+    if (is_array($output)) {
         $output = implode(',', $output);
+    }
 
     echo "<script>console.log('|" . $output . "|' );</script>";
 }
 
-//Можно доработать определив длину каждого ключа и передовать эти значения в 1-ую функцию,
-//это нужно для подстановки корректного количества пробелов
-function printOutInfoFromArray($array)
+function printOutInfoFromArray(array $array): void
 {
     debugToConsole(array_keys($array[0]));
 
+    $spaces = [];
+    foreach ($array[0] as $key => $element) {
+        $spaces[] = strlen($key);
+    }
+
     foreach ($array as $element) {
-        debugToConsole($element);
+        debugToConsole($element, $spaces);
     }
 }
 
